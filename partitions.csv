@@ -1,0 +1,8 @@
+# ESP-IDF partition table — AtomS3R (8 MB flash)
+# The firmware is ~2.5 MB; 4 MB of app leaves room to grow and still keeps half
+# the flash free for a future OTA slot or a data partition.
+# Note: if you change the phy_init or app partition offset, make sure to change the offset in Kconfig.projbuild
+# Name,   Type, SubType, Offset,  Size, Flags
+nvs,      data, nvs,     0x9000,  0x6000,
+phy_init, data, phy,     0xf000,  0x1000,
+factory,  app,  factory, 0x10000, 4M,

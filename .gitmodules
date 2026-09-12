@@ -1,0 +1,3 @@
+[submodule "deps/esp-webrtc-solution"]
+	path = deps/esp-webrtc-solution
+	url = https://github.com/espressif/esp-webrtc-solution.git

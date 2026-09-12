@@ -1,0 +1,9 @@
+idf_component_register(SRCS "main.c"
+                            "vapi_app.c"
+                            "vapi_client.c"
+                            "vapi_media.c"
+                            "aec_probe.c"
+                            "controls.c"
+                            "board.c"
+                            "display.c"
+                       INCLUDE_DIRS ".")

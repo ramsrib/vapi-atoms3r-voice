@@ -1,0 +1,36 @@
+# --- Secrets / local config -------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# Header generated from .env at configure time (tools/gen_env_header.py)
+main/env_config.generated.h
+*.generated.h
+
+# --- ESP-IDF build artifacts ------------------------------------------------
+/build/
+/managed_components/
+dependencies.lock
+
+# Generated sdkconfig (defaults live in sdkconfig.defaults*)
+sdkconfig
+sdkconfig.old
+sdkconfig.ci
+
+# --- Editor / IDE -----------------------------------------------------------
+.vscode/
+.idea/
+*.code-workspace
+compile_commands.json
+.cache/
+
+# --- OS junk ----------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+
+# --- Misc -------------------------------------------------------------------
+*.log
+*.swp
+*~

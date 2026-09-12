@@ -1,0 +1,21 @@
+# ESP32-S3 (AtomS3R) target-specific defaults.
+#
+# The AtomS3R is an ESP32-S3-PICO-1 (LGA56) with 8 MB embedded flash (GD) and
+# 8 MB embedded octal PSRAM (AP Memory, 3.3 V). Confirmed on the unit here with
+# `esptool.py chip_id`; verify with the same command before assuming a second
+# AtomS3R matches, since M5Stack also ships an AtomS3 with no PSRAM at all.
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
+
+# 80 MHz flash + PSRAM, not 120 MHz. The Korvo-2 build runs both at 120 MHz, but
+# that needs a flash part rated for it and puts PSRAM in a mode with documented
+# errata. 80/80 is what the Vapi firmware on this same board shipped with.
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_SPEED_80M=y
+CONFIG_ESP32S3_SPIRAM_SUPPORT=y
+
+# Max CPU + larger caches (audio/WebRTC are compute-heavy)
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+CONFIG_ESP32S3_INSTRUCTION_CACHE_32KB=y
+CONFIG_ESP32S3_DATA_CACHE_64KB=y
+CONFIG_ESP32S3_DATA_CACHE_LINE_64B=y

@@ -1,0 +1,32 @@
+## IDF Component Manager manifest.
+##
+## The audio pipeline components come from Espressif's esp-webrtc-solution,
+## vendored as a git submodule at deps/ and pinned to an exact commit. They are
+## referenced by path rather than fetched individually from GitHub, because the
+## SDK's own manifests use `override_path` fields with relative paths into its
+## tree — pulling single subdirectories out breaks those.
+##
+## Note what is NOT here: esp_webrtc / peer_default. Vapi's websocket transport
+## carries raw PCM, so this firmware has no peer connection, no ICE and no SRTP.
+## Only the capture (ES8311 + AEC) and render halves are used. Pulling in
+## esp_webrtc would also pin esp_websocket_client to ~1.4.0 and conflict with
+## the version below.
+dependencies:
+  idf:
+    version: ">=5.0"
+
+  capture_audio_src:
+    path: ../deps/esp-webrtc-solution/components/esp_capture/src/impl/capture_audio_src
+  capture_audio_enc:
+    path: ../deps/esp-webrtc-solution/components/esp_capture/src/impl/capture_audio_enc
+  render_impl:
+    path: ../deps/esp-webrtc-solution/components/av_render/render_impl
+
+  # Transport to Vapi.
+  espressif/esp_websocket_client:
+    version: "^1.5.0"
+
+  # AtomS3R's 128x128 LCD. The panel is a GC9107, which this GC9A01 driver
+  # handles via a vendor init-command override (see display.c).
+  espressif/esp_lcd_gc9a01:
+    version: "^2.0.4"
