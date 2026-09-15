@@ -17,7 +17,7 @@ SHELL := /bin/bash
 # Where ESP-IDF lives. Uses $IDF_PATH from the environment if set; otherwise
 # tries the two conventional install locations before giving up.
 ifeq ($(origin IDF_PATH), undefined)
-  IDF_PATH := $(firstword $(wildcard $(HOME)/esp/esp-idf $(HOME)/esp-idf))
+  IDF_PATH := $(firstword $(wildcard $(HOME)/esp/esp-idf $(HOME)/esp-idf ../_sdk/esp-idf ../../_sdk/esp-idf))
 endif
 EXPORT := $(IDF_PATH)/export.sh
 

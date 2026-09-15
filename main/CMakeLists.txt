@@ -1,4 +1,5 @@
 idf_component_register(SRCS "main.c"
+                            "wifi_failover.c"
                             "vapi_app.c"
                             "vapi_client.c"
                             "vapi_media.c"

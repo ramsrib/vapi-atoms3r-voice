@@ -222,6 +222,24 @@ Expected on success: `POST https://api.vapi.ai/call` → `call <id> created` →
 > typed into an interactive `make monitor`. Reading the log *can* be automated.
 > Details: [docs/SERIAL-CONSOLE.md](docs/SERIAL-CONSOLE.md).
 
+## WiFi failover
+
+`WIFI_SSID_2` and `WIFI_SSID_3` in `.env` are backup networks, tried in order
+when the one above them does not answer. Leave them blank and nothing changes.
+
+Each network gets two attempts before the next is tried. A dropped association
+and an absent AP are indistinguishable from the device's side and want opposite
+responses — the first usually reconnects immediately, the second never will — so
+one retry serves the transient without stranding the device on a network that is
+not there. On success the current network is kept, so one that just worked is
+retried first if it drops.
+
+Note that the underlying networking helper prefers WiFi credentials stored in
+NVS over the ones it is passed ("Force to use wifi config from nvs"), which
+means that after a first successful connection `WIFI_SSID` would otherwise be
+ignored on every later boot. The first network is therefore applied explicitly
+at startup rather than left to `network_init()`.
+
 ## Layout
 
 ```

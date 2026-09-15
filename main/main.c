@@ -19,6 +19,7 @@
 #include "media_lib_os.h"
 #include "esp_timer.h"
 #include "common.h"
+#include "wifi_failover.h"
 #include "esp_capture_defaults.h"
 
 #define TAG "VAPI_MAIN"
@@ -213,24 +214,13 @@ static void thread_scheduler(const char *thread_name, media_lib_thread_cfg_t *th
     }
 }
 
-/* Log the exact reason the AP rejects/drops us (helps diagnose WiFi auth:
- * reason 15 = 4-way handshake timeout / wrong password, 204 = handshake timeout,
- * 205 = connection fail, 2 = auth leave, etc.). */
-static void wifi_disconnect_reason_cb(void *arg, esp_event_base_t base,
-                                      int32_t id, void *data)
-{
-    wifi_event_sta_disconnected_t *e = (wifi_event_sta_disconnected_t *)data;
-    if (e) {
-        ESP_LOGW(TAG, "WiFi disconnected: reason=%d rssi=%d", e->reason, e->rssi);
-    }
-}
-
 static int network_event_handler(bool connected)
 {
     /* The call is driven by the front button, not auto-started on connect — so a
      * tap is a clean on/off switch. On WiFi loss, tear down any active call. */
     vapi_set_wifi_state(connected);
     if (connected) {
+        wifi_failover_connected();
         ESP_LOGI(TAG, "WiFi connected — tap the button to start a call");
     } else {
         RUN_ASYNC(netstop, { vapi_call_stop(); vapi_refresh_display(); });
@@ -290,14 +280,13 @@ void app_main(void)
     vapi_client_init();
     controls_init();
     init_console();
-    network_init(WIFI_SSID, WIFI_PASSWORD, network_event_handler);
-    esp_event_handler_register(WIFI_EVENT, WIFI_EVENT_STA_DISCONNECTED,
-                               wifi_disconnect_reason_cb, NULL);
+    wifi_failover_init(network_event_handler);
     log_heap();
     int tick = 0;
     while (1) {
         media_lib_thread_sleep(2000);
         vapi_call_query();
+        wifi_failover_poll();
         if (++tick % 5 == 0) {   /* every ~10 s */
             log_heap();
         }
