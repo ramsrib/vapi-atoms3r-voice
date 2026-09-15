@@ -227,7 +227,9 @@ Expected on success: `POST https://api.vapi.ai/call` → `call <id> created` →
 `WIFI_SSID_2` and `WIFI_SSID_3` in `.env` are backup networks, tried in order
 when the one above them does not answer. Leave them blank and nothing changes.
 
-Each network gets two attempts before the next is tried. A dropped association
+Each network gets three attempts before the next is tried. Association on a
+normal boot routinely fails twice before succeeding, so a smaller budget is
+spent by healthy behaviour alone. A dropped association
 and an absent AP are indistinguishable from the device's side and want opposite
 responses — the first usually reconnects immediately, the second never will — so
 one retry serves the transient without stranding the device on a network that is

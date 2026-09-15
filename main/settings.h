@@ -128,11 +128,17 @@ extern "C" {
 /**
  * @brief  How many times one network may fail before the next is tried.
  *
- * Two, because the two failures look identical from here but want opposite
- * responses: an AP that is absent should be abandoned quickly, while one that
- * dropped a working connection usually takes it straight back.
+ * Three, sized from measured behaviour rather than taste. Association on a
+ * normal boot routinely fails twice before succeeding — `reason=2` then
+ * `reason=205`, then an IP — identically across three separate boards, so it is
+ * the access point's behaviour and not a flaky unit. At two attempts a healthy
+ * boot consumes the whole budget and any further hiccup switches networks for
+ * no good reason, which at a venue means dropping to a hotspot that may not be
+ * up yet.
+ *
+ * The cost of the extra attempt is ~2 s before a genuine switch.
  */
-#define WIFI_ATTEMPTS_PER_NET (2)
+#define WIFI_ATTEMPTS_PER_NET (3)
 
 #ifdef ENV_VAPI_API_URL
 #define VAPI_API_URL ENV_VAPI_API_URL
