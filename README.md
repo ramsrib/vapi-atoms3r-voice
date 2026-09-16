@@ -6,45 +6,6 @@ Press the button, talk, press again to hang up. No phone, no browser, no app.
 Mic → PCM → Vapi, and its reply → PCM → speaker, over Vapi's `vapi.websocket`
 transport. Around 2,400 lines of C on ESP-IDF.
 
-> **Status:** working on real hardware — calls connect, audio flows both ways,
-> echo is handled. Built and tested on an AtomS3R + Atomic Echo Base.
-
-## Why there is no WebRTC here
-
-You would expect a voice device to be a WebRTC client. This one isn't, for three
-reasons worth knowing before you reach for one:
-
-**1. Vapi's WebRTC transport is Daily, and Daily has no embedded client.** Ask
-the live API and it tells you the transport list:
-
-```console
-$ curl -s -X POST https://api.vapi.ai/call \
-    -H "authorization: Bearer $VAPI_API_KEY" -H 'content-type: application/json' \
-    -d '{"assistantId":"...","transport":{"provider":"x"}}'
-{"message":["transport.provider must be one of the following values:
-  daily, vapi.websocket, twilio, vonage, telnyx, vapi.sip"],...}
-```
-
-Daily's client signaling is proprietary and unspecified; their SDKs are
-JS/Swift/Kotlin/Python/Rust and `daily-core` ships as a closed binary. There is
-no C client and no protocol document to write one from.
-
-**2. The SDP gateway Vapi's own 2025 workshop firmware used is gone.**
-[VapiAI/vapicon-2025-hardware-workshop](https://github.com/VapiAI/vapicon-2025-hardware-workshop)
-targets this exact board and POSTs a plain SDP offer to `staging-webrtc.vapi.ai`.
-That host now returns Cloudflare **530** and `webrtc.vapi.ai` does not resolve,
-so that firmware will not connect today.
-
-**3. `vapi.websocket` is the path an MCU can actually reach — and it's simpler.**
-No ICE, no DTLS-SRTP, no SDP, no peer connection: a TLS websocket where binary
-frames are raw PCM and text frames are JSON.
-
-The cost is uncompressed audio — 16 kHz mono s16le is **256 kbit/s each way**,
-about 16× Opus. Comfortable on 802.11n.
-
-WebRTC would also not have helped with echo: `esp_webrtc` has no AEC of its own,
-and reuses the same Espressif audio front-end this firmware uses.
-
 ## Hardware
 
 | | |
